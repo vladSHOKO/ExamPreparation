@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Illuminate\Console\View\Components\Task;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -21,6 +20,6 @@ class Student extends Model
 
     public function tasks(): HasMany
     {
-        return $this->hasMany(Task::class);
+        return $this->hasMany(TaskSession::class);
     }
 }

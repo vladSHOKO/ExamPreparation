@@ -17,6 +17,7 @@ return new class extends Migration
             $table->text('description');
             $table->string('answer');
             $table->string('subject');
+            $table->string('type');
             $table->timestamps();
         });
     }
