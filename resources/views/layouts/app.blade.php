@@ -18,8 +18,10 @@
 <header>
     <nav class="bg-white shadow-sm">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            @auth
             <div class="flex justify-between h-16">
                 <!-- Логотип и основные ссылки -->
+                @auth
                 <div class="flex items-center">
                     <a href="{{ route('login') }}" class="flex-shrink-0 flex items-center">
                         <span class="text-xl font-bold text-indigo-600">Exam</span>
@@ -45,10 +47,10 @@
 
                     </div>
                 </div>
-
+                @endauth
                 <!-- Правая часть (авторизация/профиль) -->
+                @auth
                 <div class="hidden sm:ml-6 sm:flex sm:items-center">
-                    @auth
                         <!-- Меню пользователя -->
                         <div class="ml-3 relative">
                             <div>
@@ -85,14 +87,9 @@
                                 </form>
                             </div>
                         </div>
-                    @else
-                        <!-- Кнопки авторизации -->
-                        <a href="{{ route('login') }}"
-                           class="text-gray-500 hover:text-gray-700 inline-flex items-center px-3 py-2 text-sm font-medium">
-                            Войти
-                        </a>
-                    @endauth
                 </div>
+                @endauth
+
 
                 <!-- Мобильное меню (кнопка) -->
                 <div class="-mr-2 flex items-center sm:hidden">
@@ -113,6 +110,7 @@
                     </button>
                 </div>
             </div>
+            @endauth
         </div>
 
         <!-- Мобильное меню (контент) -->

@@ -9,7 +9,6 @@
                     <p class="mt-2 text-gray-600">Выберите задачу и приступайте к решению</p>
                 </div>
             </div>
-
             <div class="mb-12 topic-section" data-topic="programming">
 
 
@@ -23,7 +22,7 @@
                                     <a href="{{ url('/tasks/' . $task['id']) }}">
                                         <div class="w-10 h-10 flex items-center justify-center
                             rounded-lg shadow-md text-sm font-medium
-                            {{ 'done' === 'done' ? 'bg-green-100 text-green-800 border border-green-300' : 'bg-white text-gray-800 border border-gray-300' }}">
+                            {{ $task['status'] === 'completed' ? 'bg-green-100 text-green-800 border border-green-300' : 'bg-white text-gray-800 border border-gray-300' }}">
                                             {{ $task['id'] }}
                                         </div>
                                     </a>

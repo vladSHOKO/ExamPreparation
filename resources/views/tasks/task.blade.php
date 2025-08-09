@@ -4,6 +4,12 @@
     <div class="max-w-3xl mx-auto py-10 px-4">
         <div class="bg-white shadow-md rounded-lg p-6">
 
+            @if(session('success'))
+                <div class="text-green-600 font-medium mb-4">
+                    {{ session('success') }}
+                </div>
+            @endif
+
             <div class="mb-4 text-sm text-gray-500">
                 Задание №{{$id}}
             </div>
@@ -12,7 +18,7 @@
                 {{$description}}
             </div>
 
-            <form action="action" method="POST" class="space-y-4">
+            <form action="{{route('checkAnswer', ['id' => $id])}}" method="POST" class="space-y-4">
                 @csrf
 
                 <div>
@@ -29,8 +35,15 @@
                             class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         Отправить
                     </button>
+                    <a href="{{ route('tasks') }}"
+                       class="inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Назад к заданиям
+                    </a>
                 </div>
             </form>
+            @error('answer')
+            <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+            @enderror
         </div>
     </div>
 @endsection
