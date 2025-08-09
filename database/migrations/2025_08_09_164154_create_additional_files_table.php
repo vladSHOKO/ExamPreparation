@@ -11,12 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tasks', function (Blueprint $table) {
-            $table->id()->autoIncrement()->unique();
-            $table->text('description')->isNotEmpty();
-            $table->string('answer')->isNotEmpty();
-            $table->string('subject')->isNotEmpty();
-            $table->string('type')->isNotEmpty();
+        Schema::create('additional_files', function (Blueprint $table) {
+            $table->id();
+            $table->string('name');
+            $table->string('path')->unique()->isNotEmpty();
+            $table->foreignId('task_id')->constrained('tasks')->onDelete('cascade')->isNotEmpty();
             $table->timestamps();
         });
     }
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tasks');
+        Schema::dropIfExists('additional_files');
     }
 };
