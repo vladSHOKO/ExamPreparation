@@ -33,12 +33,13 @@
                            class="{{ request()->routeIs('welcome') ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             Главная
                         </a>
-
+                        @if(request()->user()->role === 'student')
                         <a href="{{ route('tasks') }}"
                            class="{{ request()->routeIs('tasks') ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             Задания
                         </a>
-                        @if (!empty(request()->user()) && request()->user()->role === 'teacher')
+                        @endif
+                        @if (request()->user()->role === 'teacher')
                         <a href="{{ route('register') }}"
                            class="{{ request()->routeIs('register') ? 'border-indigo-500 text-gray-900' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700' }} inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
                             Добавить ученика
