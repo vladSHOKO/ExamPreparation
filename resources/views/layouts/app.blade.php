@@ -73,11 +73,6 @@
                             <div class="origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none hidden"
                                  role="menu"
                                  id="user-menu">
-                                <a href="{{ route('login') }}"
-                                   class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                   role="menuitem">
-                                    Ваш профиль
-                                </a>
                                 <form method="POST" action="{{ route('logout') }}">
                                     @csrf
                                     <button type="submit"
@@ -121,40 +116,14 @@
                    class="bg-indigo-50 border-indigo-500 text-indigo-700 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
                     Главная
                 </a>
-                <a href="{{ route('login') }}"
+                <a href="{{ route('tasks') }}"
                    class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
-                    Тесты
+                    Задачи
                 </a>
-                <a href="{{ route('login') }}"
-                   class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">
-                    Материалы
-                </a>
-{{--                @if(auth()->user()->role === 'teacher')--}}
-{{--                    <a href="{{ route('teacher.dashboard') }}"--}}
-{{--                       class="border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800 block pl-3 pr-4 py-2 border-l-4 text-base font-medium">--}}
-{{--                        Панель учителя--}}
-{{--                    </a>--}}
-{{--                @endif--}}
             </div>
             @auth
                 <div class="pt-4 pb-3 border-t border-gray-200">
-                    <div class="flex items-center px-4">
-                        <div class="flex-shrink-0">
-                        <span class="inline-flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100">
-                            <span class="text-sm font-medium text-indigo-600">
-                                {{ strtoupper(substr(auth()->user()->login, 0, 1)) }}
-                            </span>
-                        </span>
-                        </div>
-                        <div class="ml-3">
-                            <div class="text-base font-medium text-gray-800">{{ auth()->user()->login }}</div>
-                        </div>
-                    </div>
                     <div class="mt-3 space-y-1">
-                        <a href="{{ route('login') }}"
-                           class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100">
-                            Ваш профиль
-                        </a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit"
@@ -162,19 +131,6 @@
                                 Выйти
                             </button>
                         </form>
-                    </div>
-                </div>
-            @else
-                <div class="pt-4 pb-3 border-t border-gray-200">
-                    <div class="mt-3 space-y-1">
-                        <a href="{{ route('login') }}"
-                           class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100">
-                            Войти
-                        </a>
-                        <a href="{{ route('register') }}"
-                           class="block px-4 py-2 text-base font-medium text-gray-500 hover:text-gray-800 hover:bg-gray-100">
-                            Регистрация
-                        </a>
                     </div>
                 </div>
             @endauth
