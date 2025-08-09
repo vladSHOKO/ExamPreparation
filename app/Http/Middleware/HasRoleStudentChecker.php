@@ -18,7 +18,7 @@ class HasRoleStudentChecker
         $isStudent = $request->user()->role === 'student';
 
         if(!$isStudent){
-            return abort(403, 'У вас нет доступа к списку заданий!');
+            return abort(403, 'У вас нет доступа к этому ресурсу!');
         }
 
         return $next($request);
