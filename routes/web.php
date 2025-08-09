@@ -16,8 +16,4 @@ Route::middleware('auth')->group(function () {
         Route::get('/tasks', [TaskController::class, 'showTaskCollection'])->name('tasks');
         Route::post('/tasks/{id}', [TaskController::class, 'checkAnswer'])->name('checkAnswer');
     });
-
 });
-
-
-
