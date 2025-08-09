@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('task_sessions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('task_id')->constrained('tasks')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('student_id')->constrained('students')->onDelete('cascade');
             $table->enum('status', ['processing', 'completed'])->default('processing');
             $table->timestamps();
         });
