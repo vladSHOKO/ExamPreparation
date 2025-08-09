@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Student;
 use App\Models\Task;
 use App\Models\Teacher;
 use App\Models\User;
@@ -14,8 +15,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
         $baseUser = User::factory()->create([
             'login' => 'BaseUser',
             'password' => 'password',
@@ -23,6 +22,16 @@ class DatabaseSeeder extends Seeder
         ]);
         Teacher::factory()->create([
             'user_id' => $baseUser
+        ]);
+
+        $testStudent = User::factory()->create([
+            'login' => 'TestStudent',
+            'password' => 'password',
+            'role' => 'student'
+        ]);
+        Student::factory()->create([
+            'user_id' => $testStudent,
+            'teacher_id' => $baseUser
         ]);
 
         Task::factory()->createMany(10);
