@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AdditionalFile;
 use App\Models\Student;
 use App\Models\Task;
 use App\Models\TaskSession;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class TaskController extends Controller
 {
@@ -39,7 +41,7 @@ class TaskController extends Controller
 
     public function showTask(Request $request, $id)
     {
-        $task = Task::query()->find($id);
+        $task = Task::with('additionalFiles')->find($id);
         $user = $request->user();
         $student = Student::query()->where('user_id', $user->id)->first();
 
@@ -54,6 +56,7 @@ class TaskController extends Controller
             'id' => $task->id,
             'title' => $task->title,
             'description' => $task->description,
+            'files' => $task->additionalFiles,
         ]);
     }
 
@@ -74,5 +77,47 @@ class TaskController extends Controller
         $taskSession->save();
 
         return redirect()->back()->with('success', 'Ты молодец, ответ верный!');
+    }
+
+    public function showLoadForm()
+    {
+        return view('tasks.load');
+    }
+
+    public function loadTask(Request $request)
+    {
+        $request->validate([
+            'files' => 'array',
+            'files.*' => 'file',
+            'subject' => 'string|required',
+            'type' => 'string|required',
+            'description' => 'string|required',
+            'answer' => 'string|required',
+        ]);
+
+        $task = new Task();
+        $task->fill($request->only(['subject', 'type', 'description', 'answer']));
+        $task->save();
+
+        if ($request->hasFile('files')) {
+            foreach ($request->file('files') as $file) {
+                if ($file->isValid()) {
+                    // Генерируем уникальное имя файла
+                    $filename = time() . '_' . uniqid() . '.' . $file->extension();
+
+                    // Перемещаем файл в public/tasks
+                    $file->move(public_path('tasks'), $filename);
+
+                    // Создаём запись в additional_files
+                    $additionalFile = new AdditionalFile();
+                    $additionalFile->name = $filename;
+                    $additionalFile->path = 'tasks/' . $filename;
+                    $additionalFile->task()->associate($task);
+                    $additionalFile->save();
+                }
+            }
+        }
+
+        return redirect()->back()->with('success', 'Задача успешно добавлена');
     }
 }
