@@ -13,6 +13,6 @@ class Task extends Model
 
     public function additionalFiles(): hasMany
     {
-        return $this->hasMany(AdditionalFiles::class);
+        return $this->hasMany(AdditionalFile::class);
     }
 }
