@@ -18,6 +18,12 @@
                 {{$description}}
             </div>
 
+                @foreach($files as $file)
+                    <div class="mb-6 text-lg font-medium text-gray-800">
+                        <img src="{{asset($file['path'])}}" alt="files">
+                    </div>
+                @endforeach
+
             <form action="{{route('checkAnswer', ['id' => $id])}}" method="POST" class="space-y-4">
                 @csrf
 
