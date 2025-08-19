@@ -23,7 +23,6 @@
                     <img src="{{ asset($file['path']) }}" alt="files">
                 </div>
             @endforeach
-
             <form action="{{ route('checkAnswer', ['id' => $id]) }}" method="POST" class="space-y-4">
                 @csrf
 
@@ -63,6 +62,7 @@
 
                     <!-- Форма отправки -->
                     <form id="chat-form" class="p-3 border-t flex gap-2">
+                        <meta name="csrf-token" content="{{ csrf_token() }}">
                         <input type="text" id="chat-input" placeholder="Напишите сообщение..."
                                class="flex-1 border rounded-lg p-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
                         <button type="submit"
@@ -79,29 +79,47 @@
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const messagesBox = document.getElementById('chat-messages');
-            const form = document.getElementById('chat-form');
+            const form = document.querySelector('#chat-form');
             const input = document.getElementById('chat-input');
+            const loaderDiv = '<div id="chat-loader" class="flex items-center space-x-2 p-2"> <div class="w-2 h-2 bg-indigo-600 rounded-full animate-bounce"></div> <div class="w-2 h-2 bg-indigo-600 rounded-full animate-bounce [animation-delay:-.2s]"></div> <div class="w-2 h-2 bg-indigo-600 rounded-full animate-bounce [animation-delay:-.4s]"></div> </div>';
 
             // Вставь ID задания в JS
             const TASK_ID = {{ $id }};
 
-            // Заглушка для теста
-            let messages = [
-                { sender: 'ai', message: 'Привет! Я твой помощник.' },
-                { sender: 'user', message: 'Привет! Помоги с заданием.' }
-            ];
+            function showLoader() {
+                let div = document.createElement('div');
+                div.innerHTML = loaderDiv;
+                messagesBox.appendChild(div);
+            }
 
-            function renderMessages() {
+            function deleteLoader() {
+                let div = document.getElementById('chat-loader');
+                div.closest('div').remove();
+            }
+
+            async function getMessages() {
+                return await fetch("{{route('getMessages', [$id])}}").then(response => {return response.json()});
+            }
+
+            function createDivInBoxByMessage(msg){
+                const div = document.createElement('div');
+                div.className = `flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`;
+                div.innerHTML = `<div class="${msg.role === 'user'
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-gray-200 text-gray-900'} px-4 py-2 rounded-lg max-w-xs">${msg.content}</div>`;
+                messagesBox.appendChild(div);
+            }
+
+            async function renderMessages(newMessage) {
                 messagesBox.innerHTML = '';
+                showLoader();
+                let messages = await getMessages().then(data => {return data});
+
                 messages.forEach(msg => {
-                    const div = document.createElement('div');
-                    div.className = `flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`;
-                    div.innerHTML = `<div class="${msg.sender === 'user'
-                        ? 'bg-indigo-600 text-white'
-                        : 'bg-gray-200 text-gray-900'} px-4 py-2 rounded-lg max-w-xs">${msg.message}</div>`;
-                    messagesBox.appendChild(div);
+                    createDivInBoxByMessage(msg)
                 });
                 messagesBox.scrollTop = messagesBox.scrollHeight;
+                deleteLoader();
             }
 
             renderMessages();
@@ -111,17 +129,27 @@
                 const text = input.value.trim();
                 if (!text) return;
 
+                let message = { role: 'user', content: text }
                 // Добавляем сообщение на фронте
-                messages.push({ sender: 'user', message: text });
-                renderMessages();
+                createDivInBoxByMessage(message);
                 input.value = '';
 
-                // Здесь потом будет твой POST запрос на бэк
-                // fetch(`/tasks/${TASK_ID}/chat/messages`, {...})
-                setTimeout(() => {
-                    messages.push({ sender: 'ai', message: 'Это ответ от AI (заглушка)' });
-                    renderMessages();
-                }, 1000);
+                showLoader();
+                let response = fetch("{{route('postMessage', [$id])}}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    credentials: "same-origin",
+                    body: JSON.stringify(message)
+                })
+                    .then(result => result.json())
+                    .then(data => {
+                        deleteLoader();
+                        createDivInBoxByMessage(data);
+                    });
+
             });
         });
     </script>
