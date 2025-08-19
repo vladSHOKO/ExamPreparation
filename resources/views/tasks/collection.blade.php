@@ -19,7 +19,7 @@
 
                             <div class="flex flex-wrap gap-1">
                                 @foreach($tasks as $task)
-                                    <a href="{{ url('/task/' . $task['id']) }}">
+                                    <a href="{{ route('task', $task['id']) }}">
                                         <div class="w-10 h-10 flex items-center justify-center
                             rounded-lg shadow-md text-sm font-medium
                             {{ $task['status'] === 'completed' ? 'bg-green-100 text-green-800 border border-green-300' : 'bg-white text-gray-800 border border-gray-300' }}">
