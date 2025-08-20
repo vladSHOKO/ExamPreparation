@@ -26,12 +26,15 @@ class ChatMessagesController extends Controller
             'role' => 'required|string'
         ]);
         $user = $request->user();
+        $studentId = Student::query()->where('user_id', $user->id)->first()->id;
 
-        $taskSession = TaskSession::query()->where('task_id', $taskId)->first();
+        $taskSession = TaskSession::query()->where('task_id', $taskId)->where('student_id', $studentId)->first();
 
         $chatMessage = new ChatMessage();
         $chatMessage->content = $data['content'];
         $chatMessage->role = $data['role'];
+        $chatMessage->taskSession()->associate($taskSession);
+        $chatMessage->save();
 
 
 

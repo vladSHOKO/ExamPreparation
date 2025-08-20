@@ -9,7 +9,7 @@ class ChatMessage extends Model
 {
     protected $fillable = ['content', 'role'];
 
-    public function session(): BelongsTo
+    public function taskSession(): BelongsTo
     {
         return $this->belongsTo(TaskSession::class);
     }
