@@ -34,5 +34,13 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
+    'gigachat' => [
+        'base_url' => env('GIGACHAT_BASE_URL'),
+        'client_id' => env('GIGACHAT_CLIENT_ID'),
+        'client_secret' => env('GIGACHAT_CLIENT_SECRET'),
+        'scope' => env('GIGACHAT_SCOPE', 'GIGACHAT_API_PERS'),
+        'model' => env('GIGACHAT_MODEL', 'gigachat:latest'),
+        'timeout' => env('GIGACHAT_TIMEOUT', 30),
+    ],
 
 ];
