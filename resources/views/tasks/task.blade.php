@@ -86,6 +86,13 @@
             // Вставь ID задания в JS
             const TASK_ID = {{ $id }};
 
+            function scrollChatToBottom() {
+                messagesBox.scrollTo({
+                    top: messagesBox.scrollHeight,
+                    behavior: "smooth"
+                });
+            }
+
             function showLoader() {
                 let div = document.createElement('div');
                 div.innerHTML = loaderDiv;
@@ -108,6 +115,7 @@
                     ? 'bg-indigo-600 text-white'
                     : 'bg-gray-200 text-gray-900'} px-4 py-2 rounded-lg max-w-xs">${msg.content}</div>`;
                 messagesBox.appendChild(div);
+                scrollChatToBottom();
             }
 
             async function renderMessages(newMessage) {
@@ -149,7 +157,6 @@
                         deleteLoader();
                         createDivInBoxByMessage(data);
                     });
-
             });
         });
     </script>
