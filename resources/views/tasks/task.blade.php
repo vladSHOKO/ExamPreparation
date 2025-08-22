@@ -11,20 +11,19 @@
             @endif
 
             <div class="mb-4 text-sm text-gray-500">
-                Задание №{{$id}}
+                Задание №{{ $id }}
             </div>
 
             <div class="mb-6 text-lg font-medium text-gray-800">
-                {{$description}}
+                {{ $description }}
             </div>
 
-                @foreach($files as $file)
-                    <div class="mb-6 text-lg font-medium text-gray-800">
-                        <img src="{{asset($file['path'])}}" alt="files">
-                    </div>
-                @endforeach
-
-            <form action="{{route('checkAnswer', ['id' => $id])}}" method="POST" class="space-y-4">
+            @foreach($files as $file)
+                <div class="mb-6 text-lg font-medium text-gray-800">
+                    <img src="{{ asset($file['path']) }}" alt="files">
+                </div>
+            @endforeach
+            <form action="{{ route('checkAnswer', ['id' => $id]) }}" method="POST" class="space-y-4">
                 @csrf
 
                 <div>
@@ -47,9 +46,118 @@
                     </a>
                 </div>
             </form>
+
             @error('answer')
             <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
             @enderror
+
+            <!-- Чат с AI -->
+            <div class="mt-10">
+                <h2 class="text-lg font-semibold mb-3">Чат с AI помощником</h2>
+                <div class="border rounded-lg bg-gray-50 flex flex-col h-96">
+                    <!-- Сообщения -->
+                    <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3">
+                        <!-- Сообщения будут добавляться сюда JS-ом -->
+                    </div>
+
+                    <!-- Форма отправки -->
+                    <form id="chat-form" class="p-3 border-t flex gap-2">
+                        <meta name="csrf-token" content="{{ csrf_token() }}">
+                        <input type="text" id="chat-input" placeholder="Напишите сообщение..."
+                               class="flex-1 border rounded-lg p-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
+                        <button type="submit"
+                                class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700">
+                            Отправить
+                        </button>
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const messagesBox = document.getElementById('chat-messages');
+            const form = document.querySelector('#chat-form');
+            const input = document.getElementById('chat-input');
+            const loaderDiv = '<div id="chat-loader" class="flex items-center space-x-2 p-2"> <div class="w-2 h-2 bg-indigo-600 rounded-full animate-bounce"></div> <div class="w-2 h-2 bg-indigo-600 rounded-full animate-bounce [animation-delay:-.2s]"></div> <div class="w-2 h-2 bg-indigo-600 rounded-full animate-bounce [animation-delay:-.4s]"></div> </div>';
+
+            // Вставь ID задания в JS
+            const TASK_ID = {{ $id }};
+
+            function scrollChatToBottom() {
+                messagesBox.scrollTo({
+                    top: messagesBox.scrollHeight,
+                    behavior: "smooth"
+                });
+            }
+
+            function showLoader() {
+                let div = document.createElement('div');
+                div.innerHTML = loaderDiv;
+                messagesBox.appendChild(div);
+            }
+
+            function deleteLoader() {
+                let div = document.getElementById('chat-loader');
+                div.closest('div').remove();
+            }
+
+            async function getMessages() {
+                return await fetch("{{route('getMessages', [$id])}}").then(response => {return response.json()});
+            }
+
+            function createDivInBoxByMessage(msg){
+                const div = document.createElement('div');
+                div.className = `flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`;
+                div.innerHTML = `<div class="${msg.role === 'user'
+                    ? 'bg-indigo-600 text-white'
+                    : 'bg-gray-200 text-gray-900'} px-4 py-2 rounded-lg max-w-xs">${msg.content}</div>`;
+                messagesBox.appendChild(div);
+                scrollChatToBottom();
+            }
+
+            async function renderMessages(newMessage) {
+                messagesBox.innerHTML = '';
+                showLoader();
+                let messages = await getMessages().then(data => {return data});
+
+                messages.forEach(msg => {
+                    createDivInBoxByMessage(msg)
+                });
+                messagesBox.scrollTop = messagesBox.scrollHeight;
+                deleteLoader();
+            }
+
+            renderMessages();
+
+            form.addEventListener('submit', e => {
+                e.preventDefault();
+                const text = input.value.trim();
+                if (!text) return;
+
+                let message = { role: 'user', content: text }
+                // Добавляем сообщение на фронте
+                createDivInBoxByMessage(message);
+                input.value = '';
+
+                showLoader();
+                let response = fetch("{{route('postMessage', [$id])}}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                    },
+                    credentials: "same-origin",
+                    body: JSON.stringify(message)
+                })
+                    .then(result => result.json())
+                    .then(data => {
+                        deleteLoader();
+                        createDivInBoxByMessage(data);
+                    });
+            });
+        });
+    </script>
 @endsection
