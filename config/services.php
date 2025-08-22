@@ -35,12 +35,15 @@ return [
         ],
     ],
     'gigachat' => [
-        'base_url' => env('GIGACHAT_BASE_URL'),
+        'base_url_for_access_token' => env('GIGACHAT_BASE_URL_FOR_ACCESS_TOKEN'),
+        'base_url_for_message_sending' => env('GIGACHAT_BASE_URL_FOR_MESSAGE_SENDING'),
         'client_id' => env('GIGACHAT_CLIENT_ID'),
         'client_secret' => env('GIGACHAT_CLIENT_SECRET'),
         'scope' => env('GIGACHAT_SCOPE', 'GIGACHAT_API_PERS'),
         'model' => env('GIGACHAT_MODEL', 'gigachat:latest'),
         'timeout' => env('GIGACHAT_TIMEOUT', 30),
+        'token_path'    => env('GIGACHAT_TOKEN_PATH', '/api/v2/oauth'),
+        'chat_path'     => env('GIGACHAT_CHAT_PATH', '/api/v1/chat/completions')
     ],
 
 ];
