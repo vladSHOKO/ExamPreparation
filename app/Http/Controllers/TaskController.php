@@ -7,7 +7,6 @@ use App\Models\Student;
 use App\Models\Task;
 use App\Models\TaskSession;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class TaskController extends Controller
 {
@@ -118,6 +117,6 @@ class TaskController extends Controller
             }
         }
 
-        return redirect()->back()->with('success', 'Задача успешно добавлена');
+        return redirect()->back()->with('success', 'Задача успешно добавлена! Номер задачи: ' . $task->id);
     }
 }
