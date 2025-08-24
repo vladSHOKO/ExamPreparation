@@ -82,8 +82,8 @@ class GigaChatClient
         $payload = array_filter([
             'model'       => $this->config['model'] ?? 'GigaChat-2',
             'messages'    => $messages,
-            'temperature' => $opts['temperature'] ?? 0.1,
-            'top_p'       => $opts['top_p'] ?? 0.9,
+            'temperature' => $opts['temperature'] ?? 0.9,
+            'top_p'       => $opts['top_p'] ?? 0.6,
             'max_tokens'  => $opts['max_tokens'] ?? 800,
         ], fn($v) => $v !== null);
 
