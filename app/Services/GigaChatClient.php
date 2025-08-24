@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -37,7 +38,7 @@ class GigaChatClient
             $scope = $this->config['scope'];
 
             $resp = Http::withOptions([
-                'verify' => false,
+                'verify' => base_path('certs/gigachat_chain.pem'),
             ])->withHeaders([
                 // Некоторые стенды требуют RqUID, некоторые X-Request-ID — добавим оба:
                 'RqUID'        => (string) Str::uuid(),
@@ -79,9 +80,9 @@ class GigaChatClient
         $url = rtrim($this->config['base_url_for_message_sending'], '/').($this->config['chat_path'] ?? '/api/v1/chat/completions');
 
         $payload = array_filter([
-            'model'       => $this->config['model'] ?? 'gigachat:latest',
+            'model'       => $this->config['model'] ?? 'GigaChat-2',
             'messages'    => $messages,
-            'temperature' => $opts['temperature'] ?? 0.3,
+            'temperature' => $opts['temperature'] ?? 0.1,
             'top_p'       => $opts['top_p'] ?? 0.9,
             'max_tokens'  => $opts['max_tokens'] ?? 800,
         ], fn($v) => $v !== null);
@@ -90,11 +91,12 @@ class GigaChatClient
             'Authorization' => 'Bearer '.$this->getAccessToken(),
             'Accept'        => 'application/json',
             'Content-Type'  => 'application/json',
+            'RqUID'        => (string) Str::uuid(),
             'X-Request-ID'  => (string) Str::uuid(),
         ];
 
         $http = Http::withOptions([
-            'verify' => false,
+            'verify' => base_path('certs/gigachat_chain.pem'),
         ])->withHeaders($headers)->timeout($this->config['timeout'] ?? 30);
 
         try {
@@ -102,18 +104,20 @@ class GigaChatClient
             if ($resp->status() === 401 || $resp->status() === 403) {
                 $this->clearToken();
                 $headers['Authorization'] = 'Bearer '.$this->getAccessToken();
-                $resp = Http::withHeaders($headers)->timeout($this->config['timeout'] ?? 30)->post($url, $payload);
+                $resp = Http::withOptions(['verify' => base_path('certs/gigachat_chain.pem')])->withHeaders($headers)->timeout($this->config['timeout'] ?? 30)->post($url, $payload);
             }
             $resp->throw();
 
             return $resp->json();
         } catch (RequestException $e) {
-            // 429: можно читать Retry-After
-            if (optional($e->response())->status() === 429) {
-                $retry = (int) ($e->response()->header('Retry-After') ?? 1);
+            $response = $e->response;
+            if ($response && $response->status() === 429) {
+                $retry = (int) ($response->header('Retry-After') ?? 1);
                 throw new \RuntimeException("GigaChat: перегрузка, попробуйте через {$retry} сек.");
             }
             throw $e;
+        } catch (ConnectionException $e) {
+            throw new ConnectionException($e->getMessage());
         }
     }
 }
