@@ -13,6 +13,10 @@ Route::middleware('auth')->group(function () {
         return view('welcome');
     })->name('welcome');
     Route::post('/feedback', function (Request $request) {
+        $request->validate([
+            'message' => 'required|string|max:1000',
+        ]);
+
         $user = $request->user();
         $comment = $request->get('message');
 
