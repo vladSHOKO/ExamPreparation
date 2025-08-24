@@ -86,12 +86,12 @@ class TaskController extends Controller
     public function loadTask(Request $request)
     {
         $request->validate([
-            'files' => 'array',
-            'files.*' => 'file',
-            'subject' => 'string|required',
-            'type' => 'string|required',
-            'description' => 'string|required',
-            'answer' => 'string|required',
+            'files' => 'array|max:5',
+            'files.*' => 'file:mimes:pdf,doc,docx,xls,xlsx,txt,jpg,png',
+            'subject' => 'string|required|max:255',
+            'type' => 'string|required|max:100',
+            'description' => 'string|required|max:2000',
+            'answer' => 'string|required|max:500',
         ]);
 
         $task = new Task();
