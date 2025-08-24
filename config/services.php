@@ -40,7 +40,7 @@ return [
         'client_id' => env('GIGACHAT_CLIENT_ID'),
         'client_secret' => env('GIGACHAT_CLIENT_SECRET'),
         'scope' => env('GIGACHAT_SCOPE', 'GIGACHAT_API_PERS'),
-        'model' => env('GIGACHAT_MODEL', 'gigachat:latest'),
+        'model' => env('GIGACHAT_MODEL', 'GigaChat-2'),
         'timeout' => env('GIGACHAT_TIMEOUT', 30),
         'token_path'    => env('GIGACHAT_TOKEN_PATH', '/api/v2/oauth'),
         'chat_path'     => env('GIGACHAT_CHAT_PATH', '/api/v1/chat/completions')
