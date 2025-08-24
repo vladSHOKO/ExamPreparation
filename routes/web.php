@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'web'])->group(function () {
     Route::get('/', function () {
         return view('welcome');
     })->name('welcome');
@@ -30,7 +30,7 @@ Route::middleware('auth')->group(function () {
     })->name('feedback');
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth', 'web'])->group(function () {
     Route::middleware(HasRoleTeacherChecker::class)->group(function () {
         Route::get('task/load', [TaskController::class, 'showLoadForm'])->name('showLoadForm');
         Route::post('task/load', [TaskController::class, 'loadTask'])->name('loadTask');
