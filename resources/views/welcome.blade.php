@@ -1,68 +1,77 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="max-w-4xl mx-auto py-12 px-6">
-        <div class="bg-white rounded-lg shadow-md p-8">
-            <h1 class="text-3xl font-bold text-gray-800 mb-4">
-                Добро пожаловать в <span class="text-indigo-600">Exam</span>Preparation
-            </h1>
+    <div class="max-w-5xl mx-auto py-12 px-6 space-y-12">
 
-            <p class="text-gray-600 text-lg leading-relaxed mb-6">
-                Это образовательная платформа, созданная для моих учеников внутри школы.
-                Здесь вы сможете выполнять задания, получать домашние работы и улучшать свои знания.
-                Все результаты автоматически сохраняются, и я смогу отслеживать ваш прогресс,
-                чтобы давать рекомендации и помогать вам готовиться к экзаменам.
+        <!-- Приветственный блок -->
+        <div class="bg-white shadow-xl rounded-2xl p-10">
+            <h2 class="text-3xl font-extrabold text-indigo-600 mb-6">Добро пожаловать на образовательную платформу!</h2>
+            <p class="text-gray-700 text-lg leading-relaxed mb-4">
+                Эта платформа предназначена <span class="font-semibold text-indigo-500">исключительно для учеников нашей школы</span>.
+                Её основная цель — помочь вам учиться по-новому: вместо поиска готовых ответов в интернете,
+                вы получаете <span class="font-semibold">подсказки и объяснения</span> от встроенного AI-агента.
             </p>
 
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
-                <div class="bg-gray-50 rounded-lg p-6 shadow hover:shadow-lg transition">
-                    <h2 class="text-xl font-semibold text-indigo-600 mb-2">Задания</h2>
-                    <p class="text-gray-600 text-sm">
-                        Выполняйте задачи и практические упражнения, чтобы закрепить изученный материал.
-                    </p>
-                </div>
+            <p class="text-gray-700 text-lg leading-relaxed mb-4">
+                Помните: <span class="italic text-indigo-600">обучение — это инвестиция в ваше будущее</span>.
+                Никто не знает, где и когда пригодятся полученные знания, но пока у вас есть возможность
+                — используйте её на максимум.
+            </p>
 
-                <div class="bg-gray-50 rounded-lg p-6 shadow hover:shadow-lg transition">
-                    <h2 class="text-xl font-semibold text-indigo-600 mb-2">Домашние работы</h2>
-                    <p class="text-gray-600 text-sm">
-                        Получайте задания и отправляйте ответы прямо в системе.
-                    </p>
-                </div>
+            <p class="text-gray-700 text-lg leading-relaxed mb-6">
+                Если при решении задач у вас возникнут трудности — не стесняйтесь обращаться за помощью в чат.
+            </p>
 
-                <div class="bg-gray-50 rounded-lg p-6 shadow hover:shadow-lg transition">
-                    <h2 class="text-xl font-semibold text-indigo-600 mb-2">Анализ прогресса</h2>
-                    <p class="text-gray-600 text-sm">
-                        Я вижу ваш прогресс и могу давать рекомендации по темам, которые нужно подтянуть.
-                    </p>
-                </div>
+            <div class="bg-indigo-50 border-l-4 border-indigo-400 p-5 rounded-lg mb-6">
+                <h3 class="text-indigo-700 font-semibold mb-3 flex items-center">
+                    Важно знать:
+                </h3>
+                <ul class="list-disc list-inside text-gray-700 space-y-2">
+                    <li>Задачи с прикреплёнными файлами и картинками агент пока <span class="font-semibold">не умеет читать</span>. В таких случаях нужно объяснить ему суть задания текстом.</li>
+                    <li>Текстовые задачи агент понимает полностью.</li>
+                    <li>Со временем количество предметов будет расширяться.</li>
+                </ul>
             </div>
+
+            <p class="text-gray-600 text-base">
+                <span class="font-medium text-indigo-500">Проект сейчас находится в разработке</span>,
+                поэтому возможны небольшие ограничения, но мы активно работаем над улучшением платформы.
+            </p>
         </div>
-    </div>
 
-    <div class="max-w-3xl mx-auto mt-10 bg-white shadow-md rounded-lg p-6">
-        @if(session('thanks'))
-            <div class="text-green-600 font-medium mb-4">
-                {{ session('thanks') }}
-            </div>
-        @endif
-        <h2 class="text-2xl font-bold text-gray-800 mb-4">Обратная связь</h2>
-        <p class="text-gray-600 mb-6">Поскольку портал находится на этапе разработки, будем рады, если вы оставите комментарий, или сообщите нам об ошибках.</p>
+        <!-- Блок обратной связи -->
+        <div class="bg-white shadow-xl rounded-2xl p-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Обратная связь</h2>
+            <p class="mb-6 text-gray-600">
+                Ваше мнение важно для нас! Расскажите о проблеме или предложите идею —
+                это поможет нам сделать платформу лучше.
+            </p>
 
-        <form action="{{ route('feedback') }}" method="POST" class="space-y-4">
-            @csrf
+            @if(session('thanks'))
+                <div class="bg-green-100 text-green-800 p-3 rounded-lg mb-4 shadow">
+                    {{ session('thanks') }}
+                </div>
+            @endif
 
-            <div>
-                <label for="message" class="block text-sm font-medium text-gray-700">Сообщение</label>
-                <textarea name="message" id="message" rows="4" required
-                          class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
-            </div>
+            <form action="{{ route('feedback') }}" method="POST" class="space-y-5">
+                @csrf
+                <div>
+                    <label for="message" class="block text-sm font-medium text-gray-700 mb-1">
+                        Сообщение
+                    </label>
+                    <textarea name="message" id="message" rows="4" required
+                              class="w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"></textarea>
+                </div>
 
-            <div>
-                <button type="submit"
-                        class="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Отправить
-                </button>
-            </div>
-        </form>
+                <div>
+                    <button type="submit"
+                            class="w-full inline-flex justify-center py-3 px-6 text-lg font-semibold rounded-xl shadow-md text-white bg-indigo-600 hover:bg-indigo-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        ✉️ Отправить
+                    </button>
+                </div>
+            </form>
+        </div>
+
+
     </div>
 @endsection
