@@ -24,6 +24,8 @@ services:
   php:
     build: .
     container_name: laravel-php
+    depends_on:
+      - db
     working_dir: /var/www
     volumes:
       - .:/var/www
