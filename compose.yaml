@@ -18,3 +18,9 @@ services:
     ports:
       - "8080:8080"
 
+  php:
+    image: serversideup/php:8.3-fpm-nginx
+    ports:
+      - "80:80"
+    volumes:
+      - .:/var/www/html
