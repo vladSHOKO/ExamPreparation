@@ -5,16 +5,15 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
-# копируем package.json и lock-файл
+# копируем только package.json для кеша зависимостей
 COPY package*.json vite.config.* ./
 
-# устанавливаем зависимости
 RUN npm ci
 
-# копируем исходники
+# копируем исходники (чтобы vite видел ресурсы)
 COPY . .
 
-# собираем ассеты
+# билд ассетов
 RUN npm run build
 
 
@@ -23,7 +22,7 @@ RUN npm run build
 # ========================
 FROM php:8.3-fpm
 
-# устанавливаем зависимости и расширения
+# зависимости PHP
 RUN apt-get update && apt-get install -y \
         libpq-dev \
         git \
@@ -34,25 +33,28 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /var/www
 
-# устанавливаем composer
+# composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# копируем composer.* и ставим зависимости
+# сначала только composer.* (для кеша)
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist
 
-# копируем остальной код приложения
+# ставим зависимости без скриптов (artisan ещё нет)
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts
+
+# копируем весь проект
 COPY . .
 
-# копируем собранные ассеты из build stage
+# копируем собранные ассеты
 COPY --from=build /app/public/build ./public/build
 
-# оптимизация Laravel
-RUN php artisan config:cache \
+# выполняем artisan только теперь
+RUN php artisan package:discover --ansi \
+    && php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache
 
-# выставляем владельца для нужных директорий
+# права для нужных папок
 RUN chown -R www-data:www-data \
     /var/www/storage \
     /var/www/bootstrap/cache \
