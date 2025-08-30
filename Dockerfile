@@ -5,7 +5,7 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
-# копируем package.json для кеша зависимостей
+# копируем package.json и vite.config.js
 COPY package*.json vite.config.* ./
 
 RUN npm ci
@@ -35,12 +35,6 @@ WORKDIR /var/www
 # composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# сначала только composer.json и composer.lock для кеша
-COPY composer.json composer.lock ./
-
-# устанавливаем зависимости без скриптов
-RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts
-
 # копируем весь проект
 COPY . .
 
@@ -52,8 +46,8 @@ RUN mkdir -p storage/framework/cache storage/framework/views storage/framework/s
     && chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-# выполняем artisan после того как все уже на месте
-RUN php artisan package:discover --ansi \
-    && php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache
+# ставим зависимости composer без оптимизаций
+RUN composer install --no-dev --no-interaction --prefer-dist --no-scripts
+
+# выполняем package discover без кешей
+RUN php artisan package:discover --ansi
