@@ -41,3 +41,8 @@ RUN mkdir -p storage/framework/cache storage/framework/views storage/framework/s
 
 # ставим зависимости composer без оптимизаций и без скриптов
 RUN composer install --no-dev --no-interaction --prefer-dist --no-scripts
+
+# создаём нужные папки
+RUN mkdir -p storage/framework/{cache,views,sessions} bootstrap/cache public/tasks \
+    && chown -R www-data:www-data storage bootstrap/cache public/tasks \
+    && chmod -R 775 storage bootstrap/cache public/tasks
