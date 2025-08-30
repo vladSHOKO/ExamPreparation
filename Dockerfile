@@ -51,10 +51,4 @@ COPY --from=build /app/public/build ./public/build
 RUN chown -R www-data:www-data /var/www \
     && chmod -R 775 /var/www/storage /var/www/bootstrap/cache /var/www/public
 
-# выполняем artisan только теперь
-RUN php artisan package:discover --ansi \
-    && php artisan config:cache \
-    && php artisan route:cache \
-    && php artisan view:cache
-
 USER www-data
