@@ -16,7 +16,6 @@ COPY . .
 # билд ассетов
 RUN npm run build
 
-
 # ========================
 # 2. PHP (основной контейнер)
 # ========================
@@ -48,14 +47,12 @@ COPY . .
 # копируем собранные ассеты
 COPY --from=build /app/public/build ./public/build
 
+# выставляем владельца и права сразу, чтобы artisan мог писать файлы
+RUN chown -R www-data:www-data /var/www \
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache /var/www/public
+
 # выполняем artisan только теперь
 RUN php artisan package:discover --ansi \
     && php artisan config:cache \
     && php artisan route:cache \
     && php artisan view:cache
-
-# права для нужных папок
-RUN chown -R www-data:www-data \
-    /var/www/storage \
-    /var/www/bootstrap/cache \
-    /var/www/public
