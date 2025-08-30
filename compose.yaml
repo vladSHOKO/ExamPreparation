@@ -27,7 +27,6 @@ services:
     working_dir: /var/www
     volumes:
       - .:/var/www
-      - tasks:/var/www/public/tasks
     networks:
       - laravel
 
@@ -48,6 +47,3 @@ services:
 
 networks:
   laravel:
-
-volumes:
-  tasks:
