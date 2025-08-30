@@ -5,15 +5,9 @@ FROM node:20-alpine AS build
 
 WORKDIR /app
 
-# копируем package.json и vite.config.js
 COPY package*.json vite.config.* ./
-
 RUN npm ci
-
-# копируем исходники
 COPY . .
-
-# билд ассетов
 RUN npm run build
 
 # ========================
@@ -21,7 +15,6 @@ RUN npm run build
 # ========================
 FROM php:8.3-fpm
 
-# системные зависимости для PHP и PostgreSQL
 RUN apt-get update && apt-get install -y \
         libpq-dev \
         git \
@@ -46,8 +39,5 @@ RUN mkdir -p storage/framework/cache storage/framework/views storage/framework/s
     && chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
 
-# ставим зависимости composer без оптимизаций
+# ставим зависимости composer без оптимизаций и без скриптов
 RUN composer install --no-dev --no-interaction --prefer-dist --no-scripts
-
-# выполняем package discover без кешей
-RUN php artisan package:discover --ansi
