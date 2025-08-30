@@ -46,3 +46,5 @@ RUN composer install --no-dev --no-interaction --prefer-dist --no-scripts
 RUN mkdir -p storage/framework/{cache,views,sessions} bootstrap/cache public/tasks \
     && chown -R www-data:www-data storage bootstrap/cache public/tasks \
     && chmod -R 775 storage bootstrap/cache public/tasks
+
+RUN echo "upload_max_filesize = 50M\npost_max_size = 50M" >> /usr/local/etc/php/conf.d/uploads.ini
