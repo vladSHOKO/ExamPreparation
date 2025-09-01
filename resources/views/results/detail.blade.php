@@ -21,6 +21,11 @@
                         <p class="mt-1">{{ $task['description'] }}</p>
                     </div>
 
+                    <div>
+                        <span class="text-gray-500 block">Правильный ответ:</span>
+                        <p class="mt-1">{{ $task['answer'] }}</p>
+                    </div>
+
                     @if(!empty($taskSession['created_at']))
                         <div>
                             <span class="text-gray-500 block">Создана:</span>
