@@ -15,7 +15,7 @@ class MassiveRegisterStudents extends Command
      *
      * @var string
      */
-    protected $signature = 'app:massive-register-students {file}';
+    protected $signature = 'app:massive-register-students {file} {teacherUserID}';
 
     /**
      * The console command description.
@@ -30,7 +30,7 @@ class MassiveRegisterStudents extends Command
     public function handle()
     {
         $filePath = $this->argument('file');
-        $teacher = Teacher::where('user_id', 1)->first();
+        $teacher = Teacher::where('user_id', $this->argument('teacherUserID'))->first();
 
         if (!$teacher) {
             $this->error('Teacher not found');
