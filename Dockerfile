@@ -28,11 +28,12 @@ WORKDIR /var/www
 # composer
 COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# копируем весь проект
-COPY . .
-
-# копируем собранные ассеты
+# сначала копируем собранные ассеты из Node-стадии
 COPY --from=build /app/public/build ./public/build
+
+# затем весь проект (исключая node_modules и старую public/build)
+COPY . .
+RUN rm -rf public/build/node_modules # если вдруг есть лишнее
 
 # создаем нужные папки и даем права
 RUN mkdir -p storage/framework/cache storage/framework/views storage/framework/sessions bootstrap/cache \
