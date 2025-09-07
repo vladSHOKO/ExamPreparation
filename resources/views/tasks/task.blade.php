@@ -1,9 +1,9 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="max-w-3xl mx-auto py-10 px-4">
-        <div class="bg-white shadow-md rounded-lg p-6">
+    <div class="max-w-5xl mx-auto py-10 px-6"> <!-- увеличили ширину контейнера -->
 
+        <div class="bg-white shadow-md rounded-lg p-8"> <!-- блок задания -->
             @if(session('success'))
                 <div class="text-green-600 font-medium mb-4">
                     {{ session('success') }}
@@ -20,12 +20,12 @@
 
             @foreach($files as $file)
                 <div class="mb-6 text-lg font-medium text-gray-800">
-                    <img src="{{ asset($file['path']) }}" alt="files">
+                    <img src="{{ asset($file['path']) }}" alt="files" class="w-full rounded">
                 </div>
             @endforeach
+
             <form action="{{ route('checkAnswer', ['id' => $id]) }}" method="POST" class="space-y-4">
                 @csrf
-
                 <div>
                     <label for="answer" class="block text-sm font-medium text-gray-700 mb-1">
                         Ваш ответ:
@@ -35,7 +35,7 @@
                            required>
                 </div>
 
-                <div>
+                <div class="flex gap-2">
                     <button type="submit"
                             class="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         Отправить
@@ -54,14 +54,12 @@
             <!-- Чат с AI -->
             <div class="mt-10">
                 <h2 class="text-lg font-semibold mb-3">Чат с AI помощником</h2>
-                <div class="border rounded-lg bg-gray-50 flex flex-col h-96">
-                    <!-- Сообщения -->
+                <div class="border rounded-lg bg-gray-50 flex flex-col h-96 w-full"> <!-- сделали шире -->
                     <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3">
-                        <!-- Сообщения будут добавляться сюда JS-ом -->
+                        <!-- Сообщения будут добавляться JS-ом -->
                     </div>
 
-                    <!-- Форма отправки -->
-                    <form id="chat-form" class="p-3 border-t flex gap-2">
+                    <form id="chat-form" class="p-3 border-t flex gap-2 w-full">
                         <meta name="csrf-token" content="{{ csrf_token() }}">
                         <input type="text" id="chat-input" placeholder="Напишите сообщение..."
                                class="flex-1 border rounded-lg p-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm">
@@ -83,7 +81,6 @@
             const input = document.getElementById('chat-input');
             const loaderDiv = '<div id="chat-loader" class="flex items-center space-x-2 p-2"> <div class="w-2 h-2 bg-indigo-600 rounded-full animate-bounce"></div> <div class="w-2 h-2 bg-indigo-600 rounded-full animate-bounce [animation-delay:-.2s]"></div> <div class="w-2 h-2 bg-indigo-600 rounded-full animate-bounce [animation-delay:-.4s]"></div> </div>';
 
-            // Вставь ID задания в JS
             const TASK_ID = {{ $id }};
 
             function scrollChatToBottom() {
@@ -105,7 +102,7 @@
             }
 
             async function getMessages() {
-                return await fetch("{{route('getMessages', [$id])}}").then(response => {return response.json()});
+                return await fetch("{{route('getMessages', [$id])}}").then(response => response.json());
             }
 
             function createDivInBoxByMessage(msg){
@@ -113,18 +110,18 @@
                 div.className = `flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`;
                 div.innerHTML = `<div class="${msg.role === 'user'
                     ? 'bg-indigo-600 text-white'
-                    : 'bg-gray-200 text-gray-900'} px-4 py-2 rounded-lg max-w-xs">${msg.content}</div>`;
+                    : 'bg-gray-200 text-gray-900'} px-4 py-2 rounded-lg max-w-full whitespace-pre-wrap">${msg.content}</div>`; // сделали ширину max-full и перенос строк
                 messagesBox.appendChild(div);
                 scrollChatToBottom();
             }
 
-            async function renderMessages(newMessage) {
+            async function renderMessages() {
                 messagesBox.innerHTML = '';
                 showLoader();
-                let messages = await getMessages().then(data => {return data});
+                let messages = await getMessages();
 
                 messages.forEach(msg => {
-                    createDivInBoxByMessage(msg)
+                    createDivInBoxByMessage(msg);
                 });
                 messagesBox.scrollTop = messagesBox.scrollHeight;
                 deleteLoader();
@@ -137,13 +134,12 @@
                 const text = input.value.trim();
                 if (!text) return;
 
-                let message = { role: 'user', content: text }
-                // Добавляем сообщение на фронте
+                let message = { role: 'user', content: text };
                 createDivInBoxByMessage(message);
                 input.value = '';
 
                 showLoader();
-                let response = fetch("{{route('postMessage', [$id])}}", {
+                fetch("{{route('postMessage', [$id])}}", {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
