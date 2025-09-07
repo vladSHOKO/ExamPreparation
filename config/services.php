@@ -34,16 +34,19 @@ return [
             'channel' => env('SLACK_BOT_USER_DEFAULT_CHANNEL'),
         ],
     ],
-    'gigachat' => [
-        'base_url_for_access_token' => env('GIGACHAT_BASE_URL_FOR_ACCESS_TOKEN'),
-        'base_url_for_message_sending' => env('GIGACHAT_BASE_URL_FOR_MESSAGE_SENDING'),
-        'client_id' => env('GIGACHAT_CLIENT_ID'),
-        'client_secret' => env('GIGACHAT_CLIENT_SECRET'),
-        'scope' => env('GIGACHAT_SCOPE', 'GIGACHAT_API_PERS'),
-        'model' => env('GIGACHAT_MODEL', 'GigaChat-2'),
-        'timeout' => env('GIGACHAT_TIMEOUT', 30),
-        'token_path'    => env('GIGACHAT_TOKEN_PATH', '/api/v2/oauth'),
-        'chat_path'     => env('GIGACHAT_CHAT_PATH', '/api/v1/chat/completions')
+    'openai' => [
+        'api_key' => env('OPENAI_API_KEY'),
+        'model' => env('OPENAI_MODEL', 'gpt-5-mini'),
+        'base_url' => env('OPENAI_BASE_URL', 'https://api.openai.com/v1'),
+        'timeout' => env('OPENAI_TIMEOUT', 300),
+        'connect_timeout' => env('OPENAI_CONNECT_TIMEOUT', 60),
+        'max_tokens' => env('OPENAI_MAX_TOKENS', 800), // Для обратной совместимости
+        'max_completion_tokens' => env('OPENAI_MAX_COMPLETION_TOKENS', 2000), // Для GPT-5 mini
+        'temperature' => env('OPENAI_TEMPERATURE', 1.0), // GPT-5 mini поддерживает только 1.0
+        'top_p' => env('OPENAI_TOP_P', 0.5),
+        'frequency_penalty' => env('OPENAI_FREQUENCY_PENALTY', 0.0),
+        'presence_penalty' => env('OPENAI_PRESENCE_PENALTY', 0.0),
+        'verify_ssl' => env('OPENAI_VERIFY_SSL', true),
     ],
 
 ];
