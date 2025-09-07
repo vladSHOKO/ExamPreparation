@@ -3,6 +3,19 @@
 @section('content')
     <div class="max-w-5xl mx-auto py-12 px-6 space-y-12">
 
+        <!-- Блок обновлений -->
+        <div class="bg-white shadow-xl rounded-2xl p-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-2">Обновления платформы</h2>
+            <div class="bg-green-50 border-l-4 border-green-400 p-5 rounded-lg">
+                <p class="text-gray-800 mb-2">
+                    Мы заменили модель AI на более качественную и современную версию. Теперь вы можете смело обращаться к ней за помощью — ответы будут корректными, подробными и полезными, гораздо лучше, чем ранее.
+                </p>
+                <p class="text-gray-700 text-sm">
+                    Единственный нюанс: время ответа может быть немного дольше, так как модели требуется время на обдумывание и формирование пошагового решения задачи.
+                </p>
+            </div>
+        </div>
+
         <!-- Приветственный блок -->
         <div class="bg-white shadow-xl rounded-2xl p-10">
             <h2 class="text-3xl font-extrabold text-indigo-600 mb-6">Добро пожаловать на образовательную платформу!</h2>
