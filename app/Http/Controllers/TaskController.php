@@ -31,6 +31,7 @@ class TaskController extends Controller
                     $result[$type][$task['id']]['status'] = isset($statuses[$task['id']]) ? $statuses[$task['id']] : 'none';
                 }
             }
+            sort($result[$type]);
         }
 
         return view('tasks.collection', [
