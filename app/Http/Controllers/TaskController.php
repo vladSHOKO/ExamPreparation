@@ -67,7 +67,7 @@ class TaskController extends Controller
         $student = Student::query()->where('user_id', $user->id)->first();
         $rightAnswer = Task::query()->find($id)->answer;
 
-        if ($data['answer'] !== $rightAnswer) {
+        if (mb_strtolower($data['answer']) !== mb_strtolower($rightAnswer)) {
             return redirect()->back()
                 ->withErrors(['answer' => 'Ответ неверный, попробуй подумать ещё раз']);
         }
