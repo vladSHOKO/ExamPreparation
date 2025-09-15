@@ -26,7 +26,7 @@ class UserFactory extends Factory
         return [
             'login' => fake()->name(),
             'password' => static::$password ??= Hash::make('password'),
-            'role' => array_rand(['student', 'teacher'])
+            'role' => collect(['student', 'teacher'])->random(),
         ];
     }
 }
