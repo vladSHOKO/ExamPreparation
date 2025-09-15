@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Task;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -22,7 +23,7 @@ class StudentResource extends JsonResource
             ->pluck('task_id')
             ->toArray();
 
-        $allTasks = $this->tasks()->count();
+        $allTasks = Task::count();
         $completedCount = count($completedTasks);
 
         return [
