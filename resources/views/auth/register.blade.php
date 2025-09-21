@@ -42,6 +42,13 @@
                     </div>
 
                     <div>
+                        <label for="class_name" class="sr-only">Класс (на английском)</label>
+                        <input id="class_name" name="class_name" type="text" required
+                               class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                               placeholder="Класс (на английском)">
+                    </div>
+
+                    <div>
                         <label for="teacher_id" class="sr-only">Учитель</label>
                         <select id="teacher_id" name="teacher_id" required
                                 class="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm">
