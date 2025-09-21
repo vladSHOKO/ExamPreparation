@@ -43,6 +43,7 @@ class AuthController extends Controller
             'login' => 'required|string|unique:users',
             'password' => 'required|string|confirmed',
             'teacher_id' => 'required|exists:teachers,id',
+            'class_name' => 'required|string'
         ]);
 
         $user = new User();
@@ -54,6 +55,7 @@ class AuthController extends Controller
         $student = new Student();
         $student->teacher_id = $request->get('teacher_id');
         $student->user_id = $user->id;
+        $student->class_number = $request->get('class_name');
         $student->save();
 
         return redirect()->intended();
