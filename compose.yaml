@@ -47,7 +47,9 @@ services:
       - php
     networks:
       - laravel
+      - n8nIntegration
 
 networks:
-  laravel:
+  n8nIntegration:
     external: true
+  laravel:
