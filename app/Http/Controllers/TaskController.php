@@ -7,6 +7,7 @@ use App\Models\Student;
 use App\Models\Task;
 use App\Models\TaskSession;
 use Illuminate\Http\Request;
+use Throwable;
 
 class TaskController extends Controller
 {
@@ -119,5 +120,26 @@ class TaskController extends Controller
         }
 
         return redirect()->back()->with('success', 'Задача успешно добавлена! Номер задачи: ' . $task->id);
+    }
+
+    public function showTasksList(Request $request)
+    {
+        $tasks = Task::all()->sortBy('id')->toArray();
+
+        return view('tasks.list', ['tasks' => $tasks]);
+    }
+
+    public function showEdit($id)
+    {
+        $task = Task::with('additionalFiles')->findOrFail($id);
+
+        return view('tasks.edit', ['task' => $task]);
+    }
+
+    public function deleteTask(Request $request, $id)
+    {
+        $result = Task::query()->find($id)->delete();
+
+        return $result ? response()->json(['status' => 'success']) : response()->json(['error' => 'Something went wrong!'], 500);
     }
 }
