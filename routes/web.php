@@ -36,6 +36,11 @@ Route::middleware(['auth', 'web'])->group(function () {
         Route::post('task/load', [TaskController::class, 'loadTask'])->name('loadTask');
         Route::get('results', [ResultsController::class, 'showResults'])->name('showResults');
         Route::get('results/{taskSessionId}', [ResultsController::class, 'showDetail'])->name('showDetail');
+        Route::get('tasks/list', [TaskController::class, 'showTasksList'])->name('tasksList');
+        Route::get('task/{id}/edit', [TaskController::class, 'showEdit'])->name('task.edit');
+        Route::delete('task/{id}/delete', [TaskController::class, 'deleteTask'])->name('task.delete');
+        Route::put('task/{id}/update', [TaskController::class, 'updateTask'])->name('task.update');
+        Route::delete('task/file/{id}/delete', [TaskController::class, 'deleteTaskFile'])->name('task.file.delete');
     });
     Route::middleware(HasRoleStudentChecker::class)->group(function () {
         Route::get('task/{id}', [TaskController::class, 'showTask'])->name('task');
