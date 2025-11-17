@@ -31,4 +31,44 @@ class ResultsController extends Controller
 
         return view('results.detail', ['task' => $task, 'taskSession' => $taskSession, 'messages' => $messages]);
     }
+
+    public function showFilterResults(Request $request)
+    {
+        $request->validate([
+            'login' => 'string|nullable|max:100',
+            'class_number' => 'string|nullable|max:100',
+        ]);
+
+        $user = $request->user();
+        $teacher = Teacher::where('user_id', $user->id)->first();
+
+        $login = $request->query('login');
+        $classNumber = $request->query('class_number');
+
+        $query = $teacher->students();
+
+        if ($login) {
+            $query->whereHas('user', function($q) use ($login) {
+                $q->where('login', 'like', '%' . $login . '%');
+            });
+        }
+
+        if ($classNumber) {
+            $query->where('class_number', 'like', '%' . $classNumber . '%');
+        }
+
+        $students = $query->get();
+        $result = [];
+
+        foreach($students as $student){
+            $result[$student->id]['tasks'] = $student->tasks()
+                ->where('status', 'completed')
+                ->orderBy('task_id')
+                ->get()
+                ->toArray();
+            $result[$student->id]['name'] = $student->user()->first()->login;
+        }
+
+        return response()->json($result);
+    }
 }
