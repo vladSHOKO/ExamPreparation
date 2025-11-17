@@ -41,6 +41,7 @@ Route::middleware(['auth', 'web'])->group(function () {
         Route::delete('task/{id}/delete', [TaskController::class, 'deleteTask'])->name('task.delete');
         Route::put('task/{id}/update', [TaskController::class, 'updateTask'])->name('task.update');
         Route::delete('task/file/{id}/delete', [TaskController::class, 'deleteTaskFile'])->name('task.file.delete');
+        Route::get('filter/results', [ResultsController::class, 'showFilterResults'])->name('showFilterResults');
     });
     Route::middleware(HasRoleStudentChecker::class)->group(function () {
         Route::get('task/{id}', [TaskController::class, 'showTask'])->name('task');
