@@ -6,6 +6,8 @@ use App\Models\AdditionalFile;
 use App\Models\Student;
 use App\Models\Task;
 use App\Models\TaskSession;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Throwable;
 
@@ -100,24 +102,7 @@ class TaskController extends Controller
         $task->fill($request->only(['subject', 'type', 'description', 'answer']));
         $task->save();
 
-        if ($request->hasFile('files')) {
-            foreach ($request->file('files') as $file) {
-                if ($file->isValid()) {
-                    // Генерируем уникальное имя файла
-                    $filename = time() . '_' . uniqid() . '.' . $file->extension();
-
-                    // Перемещаем файл в public/tasks
-                    $file->move(public_path('tasks'), $filename);
-
-                    // Создаём запись в additional_files
-                    $additionalFile = new AdditionalFile();
-                    $additionalFile->name = $filename;
-                    $additionalFile->path = 'tasks/' . $filename;
-                    $additionalFile->task()->associate($task);
-                    $additionalFile->save();
-                }
-            }
-        }
+        $this->saveFiles($request, $task);
 
         return redirect()->back()->with('success', 'Задача успешно добавлена! Номер задачи: ' . $task->id);
     }
@@ -140,6 +125,66 @@ class TaskController extends Controller
     {
         $result = Task::query()->find($id)->delete();
 
-        return $result ? response()->json(['status' => 'success']) : response()->json(['error' => 'Something went wrong!'], 500);
+        return $result ? response()->json(['status' => 'success']) : response()->json(
+            ['error' => 'Something went wrong!'],
+            500
+        );
+    }
+
+    public function updateTask(Request $request, $id)
+    {
+        $request->validate([
+            'files' => 'array|max:5',
+            'files.*' => 'file:mimes:pdf,doc,docx,xls,xlsx,txt,jpg,png',
+            'subject' => 'string|required|max:255',
+            'type' => 'string|required|max:100',
+            'description' => 'string|required|max:2000',
+            'answer' => 'string|required|max:500',
+        ]);
+
+        $task = Task::query()->find($id);
+        $task->fill($request->only(['type', 'description', 'answer', 'subject']));
+        $result = $task->save();
+
+        $this->saveFiles($request, $task);
+
+        return $result ? response()->json(['status' => 'success']) : response()->json(
+            ['error' => 'Something went wrong!'],
+            500
+        );
+    }
+
+    public function deleteTaskFile(Request $request, $id)
+    {
+        $result = AdditionalFile::query()->find($id)->delete();
+
+        return $result ? response()->json(['status' => 'success']) : response()->json(
+            ['error' => 'Something went wrong!'],
+            500
+        );
+    }
+
+    private function saveFiles(
+        Request $request,
+        Model|Collection|Task|null $task
+    ): void {
+        if ($request->hasFile('files')) {
+            foreach ($request->file('files') as $file) {
+                if ($file->isValid()) {
+                    // Генерируем уникальное имя файла
+                    $filename = time() . '_' . uniqid() . '.' . $file->extension();
+
+                    // Перемещаем файл в public/tasks
+                    $file->move(public_path('tasks'), $filename);
+
+                    // Создаём запись в additional_files
+                    $additionalFile = new AdditionalFile();
+                    $additionalFile->name = $filename;
+                    $additionalFile->path = 'tasks/' . $filename;
+                    $additionalFile->task()->associate($task);
+                    $additionalFile->save();
+                }
+            }
+        }
     }
 }

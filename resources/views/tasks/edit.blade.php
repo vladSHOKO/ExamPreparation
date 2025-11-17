@@ -76,7 +76,7 @@
                                 <div class="flex-1">
                                     <p class="text-sm font-medium text-gray-700">{{ $file->name }}</p>
                                     @if(str_contains($file->path, '.jpg') || str_contains($file->path, '.png') || str_contains($file->path, '.jpeg'))
-                                        <img src="{{ asset($file->path) }}" alt="{{ $file->name }}" 
+                                        <img src="{{ asset($file->path) }}" alt="{{ $file->name }}"
                                              class="mt-2 max-w-full h-auto rounded max-h-32 object-contain">
                                     @endif
                                 </div>
@@ -126,36 +126,41 @@
     document.getElementById('taskForm').addEventListener('submit', function(e) {
         e.preventDefault();
 
-        const formData = new FormData(this);
-        formData.append('_method', 'PUT');
+        const formData = new FormData(document.querySelector('#taskForm'));
+
+        for (let [key, value] of formData.entries()) {
+            console.log(key, value);
+        }
 
         fetch(updateRoute, {
             method: 'POST',
             headers: {
                 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                'X-HTTP-Method-Override': 'PUT'
             },
             body: formData
         })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            }
-            return response.json().then(err => Promise.reject(err));
-        })
-        .then(data => {
-            alert('Задача успешно обновлена');
-            location.reload();
-        })
-        .catch(error => {
-            let errorMessage = 'Ошибка при сохранении задачи';
-            if (error.errors) {
-                errorMessage = Object.values(error.errors).flat().join('\n');
-            } else if (error.message) {
-                errorMessage = error.message;
-            }
-            alert(errorMessage);
-        });
+            .then(async response => {
+                const data = await response.json();
+                if (response.ok) {
+                    return data;
+                }
+                return Promise.reject(data);
+            })
+            .then(data => {
+                alert('Задача успешно обновлена');
+                location.reload();
+            })
+            .catch(error => {
+                let errorMessage = 'Ошибка при сохранении задачи';
+                if (error.errors) {
+                    errorMessage = Object.values(error.errors).flat().join('\n');
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                alert(errorMessage);
+            });
     });
 
     function deleteFile(fileId) {
@@ -168,19 +173,19 @@
                     'Accept': 'application/json'
                 }
             })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                }
-                throw new Error('Ошибка при удалении файла');
-            })
-            .then(data => {
-                alert('Файл успешно удален');
-                location.reload();
-            })
-            .catch(error => {
-                alert('Ошибка: ' + error.message);
-            });
+                .then(response => {
+                    if (response.ok) {
+                        return response.json();
+                    }
+                    throw new Error('Ошибка при удалении файла');
+                })
+                .then(data => {
+                    alert('Файл успешно удален');
+                    location.reload();
+                })
+                .catch(error => {
+                    alert('Ошибка: ' + error.message);
+                });
         }
     }
 </script>
