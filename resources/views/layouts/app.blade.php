@@ -25,7 +25,7 @@
                     <!-- Логотип и основные ссылки -->
                     @auth
                         <div class="flex items-center">
-                            <a href="{{ route('login') }}" class="flex-shrink-0 flex items-center">
+                            <a href="{{ route('welcome') }}" class="flex-shrink-0 flex items-center">
                                 <span class="text-xl font-bold text-indigo-600">Exam</span>
                                 <span class="text-xl font-bold text-gray-800">Preparation</span>
                             </a>
